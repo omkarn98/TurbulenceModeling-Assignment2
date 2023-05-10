@@ -19,7 +19,7 @@ nk=34
 viscos=1./5200.
 
 # loop over nfiles 
-nfiles=2
+nfiles=4
 #initialize fields
 u3d_nfiles=np.zeros((ni,nj,nk,nfiles+1))
 v3d_nfiles=np.zeros((ni,nj,nk,nfiles+1))
@@ -163,5 +163,21 @@ plt.axis([0, 30, 0, 14])
 #axins1.tick_params(labelleft=False)
 
 
-plt.savefig('u_linear-zoom_python.eps')
+# plt.savefig('u_linear-zoom_python.eps')
+# Task - 3
+
+uvmean1=np.mean((u3d-umean[None,:,None])*(v3d-vmean[None,:,None]), axis=(0,2))
+
+# Task - 4
+te_resolved = 0.5*(u3d**2 + v3d**2 + w3d**2)
+plt.figure(5)
+#plt.plot(yplus,te_resolved,'b-')
+
+#  Task - 5
+c_mu = 0.09
+for i in range (0,nfiles):
+    nu_t = c_mu*(te3d_nfiles[:,:,:,i]**2)/eps3d_nfiles[:,:,:,i]
+[dudx, dudy, dudz] = np.gradient(u3d,dx,y,dz)
+[dvdx, dvdy, dvdz] = np.gradient(v3d,dx,y,dz)
+shear_stress = -nu_t[:,:,:] *(dudy[0:34,:,:] + dvdx[0:34,:,:])
 
