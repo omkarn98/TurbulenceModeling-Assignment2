@@ -164,20 +164,39 @@ plt.axis([0, 30, 0, 14])
 
 
 # plt.savefig('u_linear-zoom_python.eps')
+
 # Task - 3
 
 uvmean1=np.mean((u3d-umean[None,:,None])*(v3d-vmean[None,:,None]), axis=(0,2))
+plt.figure()
+plt.plot(yplus, uvmean1)
+plt.plot(yplus_DNS, uv_DNS)
 
 # Task - 4
+
 te_resolved = 0.5*(u3d**2 + v3d**2 + w3d**2)
 plt.figure(5)
 #plt.plot(yplus,te_resolved,'b-')
 
 #  Task - 5
+Rt = te3d **2 / (viscos * eps3d)
+Ueps = (eps3d * viscos) ** (1/4)
+ystar = np.zeros[ni, nj, nk]
+for i in range (0, ni):
+   for j in range (0, nj):
+      for k in range (0, nk):
+         ystar = (Ueps[i, j, k] * y[j]) / viscos
+f_mu = np.min(1,(1 - np.exp(-ystar/14))**2 * (1 + 5/Rt**(3/4)*(-(Rt/200)**2)))
+   
+
+
+#f_mu = (1 - np.exp(- ystar / 3.1))**2 
 c_mu = 0.09
 for i in range (0,nfiles):
-    nu_t = c_mu*(te3d_nfiles[:,:,:,i]**2)/eps3d_nfiles[:,:,:,i]
+   nu_t = c_mu*(te3d_nfiles[:,:,:,i]**2)/eps3d_nfiles[:,:,:,i]
 [dudx, dudy, dudz] = np.gradient(u3d,dx,y,dz)
 [dvdx, dvdy, dvdz] = np.gradient(v3d,dx,y,dz)
 shear_stress = -nu_t[:,:,:] *(dudy[0:34,:,:] + dvdx[0:34,:,:])
 
+
+plt.show(block = 'True')
