@@ -181,13 +181,14 @@ plt.figure(5)
 #  Task - 5
 Rt = te3d **2 / (viscos * eps3d)
 Ueps = (eps3d * viscos) ** (1/4)
-ystar = np.zeros[ni, nj, nk]
+ystar = np.zeros[(ni, nj, nk)]
 for i in range (0, ni):
    for j in range (0, nj):
       for k in range (0, nk):
          ystar = (Ueps[i, j, k] * y[j]) / viscos
-f_mu = np.min(1,(1 - np.exp(-ystar/14))**2 * (1 + 5/Rt**(3/4)*(-(Rt/200)**2)))
-   
+f_mu = (1 - np.exp(-ystar/14)**2 * (1 + 5/Rt))
+
+f_mu_min = np.amin(1,f_mu)   
 
 
 #f_mu = (1 - np.exp(- ystar / 3.1))**2 
