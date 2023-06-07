@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-plt.rcParams.update({'font.size': 22})
+plt.rcParams.update({'font.size': 12})
 
 plt.interactive(True)
 
@@ -156,7 +156,7 @@ axins1.xaxis.tick_top()                 # put x ticks at the top
 #axins1.xaxis.tick_bottom()
 plt.plot(yplus,umean/ustar,'b-')
 plt.plot(yplus_DNS[jDNS],u_DNS[jDNS],'bo')
-plt.axis([0, 30, 0, 14])
+# plt.axis([0, 30, 0, 14])
 
 # Turn ticklabels of insets off
 #axins1.tick_params(labelleft=False, labelbottom=False)
@@ -165,39 +165,60 @@ plt.axis([0, 30, 0, 14])
 
 # plt.savefig('u_linear-zoom_python.eps')
 
+## Task - 2 
+
+plt.figure()
+plt.plot(umean, y)
+plt.plot(vmean, y)
+plt.plot(wmean, y)
+plt.ylabel("y")
+plt.xlabel("Mean velocity")
+plt.legend((r'$\overline{u}$',r'$\overline{v}$',r'$\overline{w}$'))
+plt.title("Mean Velocity plot")
 # Task - 3
 
 uvmean1=np.mean((u3d-umean[None,:,None])*(v3d-vmean[None,:,None]), axis=(0,2))
 plt.figure()
 plt.plot(yplus, uvmean1)
-plt.plot(yplus_DNS, uv_DNS)
+# plt.plot(vmean, y)
+# plt.plot(wmean, y)
+plt.xlabel("y+")
+plt.ylabel(r"$\overline{uv}$")
+#plt.plot(yplus_DNS, uv_DNS)
 
 # Task - 4
+uumean=np.mean((u3d-umean[None,:,None])*(u3d-umean[None,:,None]), axis=(0,2))
+vvmean=np.mean((v3d-vmean[None,:,None])*(v3d-vmean[None,:,None]), axis=(0,2))
+wwmean=np.mean((w3d-wmean[None,:,None])*(w3d-wmean[None,:,None]), axis=(0,2))
+te_resolved = 0.5*(uumean + vvmean + wwmean)
+plt.figure()
+plt.plot(yplus,te_resolved,'b-.')
+plt.plot(yplus, temean, 'r-.')
+plt.xlabel(r'$y^+$')
+# plt.semilogx()
+plt.ylabel('Turbulent Kinetic Energy')
+plt.legend(('Resolved','Modelled'))
 
-te_resolved = 0.5*(u3d**2 + v3d**2 + w3d**2)
-plt.figure(5)
-#plt.plot(yplus,te_resolved,'b-')
+# #  Task - 5
+# Rt = te3d **2 / (viscos * eps3d)
+# Ueps = (eps3d * viscos) ** (1/4)
+# ystar = np.zeros[(ni, nj, nk)]
+# for i in range (0, ni):
+#    for j in range (0, nj):
+#       for k in range (0, nk):
+#          ystar = (Ueps[i, j, k] * y[j]) / viscos
+# f_mu = (1 - np.exp(-ystar/14)**2 * (1 + 5/Rt))
 
-#  Task - 5
-Rt = te3d **2 / (viscos * eps3d)
-Ueps = (eps3d * viscos) ** (1/4)
-ystar = np.zeros[(ni, nj, nk)]
-for i in range (0, ni):
-   for j in range (0, nj):
-      for k in range (0, nk):
-         ystar = (Ueps[i, j, k] * y[j]) / viscos
-f_mu = (1 - np.exp(-ystar/14)**2 * (1 + 5/Rt))
-
-f_mu_min = np.amin(1,f_mu)   
+# f_mu_min = np.amin(1,f_mu)   
 
 
-#f_mu = (1 - np.exp(- ystar / 3.1))**2 
-c_mu = 0.09
-for i in range (0,nfiles):
-   nu_t = c_mu*(te3d_nfiles[:,:,:,i]**2)/eps3d_nfiles[:,:,:,i]
-[dudx, dudy, dudz] = np.gradient(u3d,dx,y,dz)
-[dvdx, dvdy, dvdz] = np.gradient(v3d,dx,y,dz)
-shear_stress = -nu_t[:,:,:] *(dudy[0:34,:,:] + dvdx[0:34,:,:])
+# #f_mu = (1 - np.exp(- ystar / 3.1))**2 
+# c_mu = 0.09
+# for i in range (0,nfiles):
+#    nu_t = c_mu*(te3d_nfiles[:,:,:,i]**2)/eps3d_nfiles[:,:,:,i]
+# [dudx, dudy, dudz] = np.gradient(u3d,dx,y,dz)
+# [dvdx, dvdy, dvdz] = np.gradient(v3d,dx,y,dz)
+# shear_stress = -nu_t[:,:,:] *(dudy[0:34,:,:] + dvdx[0:34,:,:])
 
 
 plt.show(block = 'True')
