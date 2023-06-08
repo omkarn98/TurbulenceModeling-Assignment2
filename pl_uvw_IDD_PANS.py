@@ -199,26 +199,37 @@ plt.xlabel(r'$y^+$')
 plt.ylabel('Turbulent Kinetic Energy')
 plt.legend(('Resolved','Modelled'))
 
-# #  Task - 5
-# Rt = te3d **2 / (viscos * eps3d)
-# Ueps = (eps3d * viscos) ** (1/4)
-# ystar = np.zeros[(ni, nj, nk)]
-# for i in range (0, ni):
-#    for j in range (0, nj):
-#       for k in range (0, nk):
-#          ystar = (Ueps[i, j, k] * y[j]) / viscos
-# f_mu = (1 - np.exp(-ystar/14)**2 * (1 + 5/Rt))
+#  Task - 5
 
-# f_mu_min = np.amin(1,f_mu)   
+c_mu = 0.09
+Ueps = (eps3d * viscos) ** (1/4)
+ystar = ((np.mean(Ueps, axis = (0,2))) * y) / viscos
+Rt = np.zeros(np.size(epsmean))
+nu_t = np.zeros(np.size(epsmean))
+f_mu = np.zeros(np.size(epsmean))
+
+for i in range (np.size(epsmean)):
+   Rt[i] = temean[i] **2 / (np.max(viscos * epsmean[i]))
+   f_mu[i] = (1 - np.exp(-ystar[i]/14))**2 * (1 + 5/(Rt[i] ** (3/4)) * np.exp(-(Rt[i] / 200) ** 2))
+   f_mu[i] = np.min([1, f_mu[i]])
+   nu_t[i] = c_mu * f_mu[i] * (temean[i]) **2 / epsmean[i]
 
 
-# #f_mu = (1 - np.exp(- ystar / 3.1))**2 
-# c_mu = 0.09
-# for i in range (0,nfiles):
-#    nu_t = c_mu*(te3d_nfiles[:,:,:,i]**2)/eps3d_nfiles[:,:,:,i]
-# [dudx, dudy, dudz] = np.gradient(u3d,dx,y,dz)
-# [dvdx, dvdy, dvdz] = np.gradient(v3d,dx,y,dz)
-# shear_stress = -nu_t[:,:,:] *(dudy[0:34,:,:] + dvdx[0:34,:,:])
+[dudx, dudy, dudz] = np.gradient(u3d,dx,y,dz)
+[dvdx, dvdy, dvdz] = np.gradient(v3d,dx,y,dz)
+[dwdx, dwdy, dwdz] = np.gradient(w3d,dx,y,dz)
 
+dudy_mean = np.mean(dudy, axis = (0,2))
+dvdx_mean = np.mean(dvdx, axis = (0,2))
+shear_stress = -nu_t * (dudy_mean + dvdx_mean)
+
+plt.figure()
+plt.plot(yplus, shear_stress, 'b-.')
+plt.plot(yplus, uvmean1, 'r-.')
+plt.xlabel(r"$y^+$")
+plt.ylabel(r"$\overline{u^{'}v^{'}}$")
+plt.legend(('Modelled', 'Resolved'))
+
+## Task - 6 
 
 plt.show(block = 'True')
